@@ -33,7 +33,7 @@
     <p id="startText">Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
-    <audio id="backgroundMusic" loop autoplay>
+    <audio id="backgroundMusic" loop>
         <source src="background-scary.mp4" type="audio/mp4">
     </audio>
     <audio id="hitSound" preload="auto" onplay="pauseBackground()" onended="resumeBackground()">
@@ -62,11 +62,11 @@
         let gameStarted = false;
         
         function pauseBackground() {
-            document.getElementById("background-scary.mp4").pause();
+            document.getElementById("backgroundMusic").pause();
         }
         
         function resumeBackground() {
-            document.getElementById("background-scary.mp4").play();
+            document.getElementById("backgroundMusic").play();
         }
         
         document.addEventListener("keydown", (e) => {
@@ -74,7 +74,7 @@
             if (e.key === "Enter" && !gameStarted) {
                 gameStarted = true;
                 document.getElementById("startText").style.display = "none";
-                document.getElementById("background-scary.mp4").play();
+                document.getElementById("backgroundMusic").play();
                 resetGame();
             }
         });
@@ -127,7 +127,7 @@
                 bike.y += bike.speed;
             }
             
-            if (frame % 120 === 0 && frame < 5400) {
+            if (frame % 120 === 0) {
                 spawnObstacle();
             }
             
@@ -151,15 +151,15 @@
             requestAnimationFrame(gameLoop);
         }
 
+        function drawIlluminatiEye() {
+            if (illuminatiEye) {
+                ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
+                illuminatiEye.x -= illuminatiEye.speed;
+            }
+        }
+
         function spawnIlluminatiEye() {
             illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
-            function moveEye() {
-                if (illuminatiEye.x > -illuminatiEye.width) {
-                    illuminatiEye.x -= illuminatiEye.speed;
-                    requestAnimationFrame(moveEye);
-                }
-            }
-            moveEye();
         }
     </script>
 </body>
