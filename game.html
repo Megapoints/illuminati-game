@@ -35,23 +35,15 @@
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
     <audio id="backgroundMusic" loop autoplay>
         <source src="background-scary.mp4" type="audio/mp4">
-        <source src="background-scary.ogg" type="audio/ogg">
-        <source src="background-scary.wav" type="audio/wav">
     </audio>
     <audio id="hitSound" preload="auto" onplay="pauseBackground()" onended="resumeBackground()">
         <source src="hit-sound.mp4" type="audio/mp4">
-        <source src="hit-sound.ogg" type="audio/ogg">
-        <source src="hit-sound.wav" type="audio/wav">
     </audio>
     <audio id="rockHitSound" preload="auto" onplay="pauseBackground()" onended="resumeBackground()">
         <source src="rock-hit.mp4" type="audio/mp4">
-        <source src="rock-hit.ogg" type="audio/ogg">
-        <source src="rock-hit.wav" type="audio/wav">
     </audio>
     <audio id="endSound" preload="auto">
         <source src="end-sound.mp4" type="audio/mp4">
-        <source src="end-sound.ogg" type="audio/ogg">
-        <source src="end-sound.wav" type="audio/wav">
     </audio>
     <script>
         const canvas = document.getElementById("gameCanvas");
@@ -70,11 +62,11 @@
         let gameStarted = false;
         
         function pauseBackground() {
-            document.getElementById("backgroundMusic").pause();
+            document.getElementById("background-scary.mp4").pause();
         }
         
         function resumeBackground() {
-            document.getElementById("backgroundMusic").play();
+            document.getElementById("background-scary.mp4").play();
         }
         
         document.addEventListener("keydown", (e) => {
@@ -82,7 +74,7 @@
             if (e.key === "Enter" && !gameStarted) {
                 gameStarted = true;
                 document.getElementById("startText").style.display = "none";
-                document.getElementById("backgroundMusic").play();
+                document.getElementById("background-scary.mp4").play();
                 resetGame();
             }
         });
@@ -109,8 +101,7 @@
             if (!illuminatiEye) {
                 const type = Math.random() > 0.5 ? "alien" : "rock";
                 const yPosition = Math.random() * (canvas.height - 40);
-                let sizeIncrease = speedIncreaseCount * 2;
-                obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
+                obstacles.push({ x: canvas.width, y: yPosition, width: 40, height: 40, type });
             }
         }
 
@@ -118,6 +109,7 @@
             obstacles.forEach(obstacle => {
                 let img = obstacle.type === "alien" ? alienImg : rockImg;
                 ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                obstacle.x -= gameSpeed;
             });
         }
 
@@ -135,9 +127,9 @@
                 bike.y += bike.speed;
             }
             
-            obstacles.forEach(obstacle => {
-                obstacle.x -= gameSpeed;
-            });
+            if (frame % 120 === 0 && frame < 5400) {
+                spawnObstacle();
+            }
             
             if (frame === 2700) {
                 gameSpeed = 3;
@@ -153,10 +145,6 @@
                 document.getElementById("endSound").play();
                 document.getElementById("coordinates").style.display = "block";
                 document.getElementById("coordinates").style.opacity = 1;
-            }
-            
-            if (frame % 180 === 0 && frame < 5400) {
-                spawnObstacle();
             }
             
             frame++;
