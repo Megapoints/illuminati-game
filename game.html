@@ -30,8 +30,21 @@
     <h1>Ride to the Truth</h1>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
-    <audio id="scarySound" src="scary-sound.mp3" preload="auto"></audio>
-    <audio id="hitSound" src="hit-sound.mp3" preload="auto"></audio>
+    <audio id="scarySound" preload="auto">
+        <source src="scary-sound.mp4" type="audio/mp4">
+        <source src="scary-sound.ogg" type="audio/ogg">
+        <source src="scary-sound.wav" type="audio/wav">
+    </audio>
+    <audio id="hitSound" preload="auto">
+        <source src="hit-sound.mp4" type="audio/mp4">
+        <source src="hit-sound.ogg" type="audio/ogg">
+        <source src="hit-sound.wav" type="audio/wav">
+    </audio>
+    <audio id="endSound" preload="auto">
+        <source src="end-sound.mp4" type="audio/mp4">
+        <source src="end-sound.ogg" type="audio/ogg">
+        <source src="end-sound.wav" type="audio/wav">
+    </audio>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -39,6 +52,7 @@
         let bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
         let obstacles = [];
         let gameSpeed = 2;
+        let speedIncreaseCount = 0;
         let keys = {};
         let reachedTop = false;
         let gameRunning = true;
@@ -49,7 +63,9 @@
         alienImg.src = 'alien.png';
         let rockImg = new Image();
         rockImg.src = 'rock.png';
-
+        let illuminatiImg = new Image();
+        illuminatiImg.src = 'illuminati-eye.png';
+        
         document.addEventListener("keydown", (e) => { keys[e.key] = true; });
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
@@ -60,7 +76,8 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            obstacles.push({ x: canvas.width, y: yPosition, width: 40, height: 40, type });
+            let sizeIncrease = speedIncreaseCount * 5;
+            obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
         function drawObstacles() {
@@ -70,12 +87,18 @@
             });
         }
 
+        function drawIlluminatiEye() {
+            ctx.drawImage(illuminatiImg, canvas.width / 2 - 100, canvas.height / 2 - 100, 200, 200);
+        }
+
         function resetGame() {
             bike.y = 200;
             obstacles = [];
             gameSpeed = 2;
+            speedIncreaseCount = 0;
             reachedTop = false;
             document.getElementById("coordinates").style.display = "none";
+            gameRunning = true;
         }
 
         function gameLoop() {
@@ -83,11 +106,11 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
-
-            if (keys['ArrowLeft']) {
+            
+            if (keys['ArrowLeft'] && bike.y > 0) {
                 bike.y -= bike.speed;
             }
-            if (keys['ArrowRight']) {
+            if (keys['ArrowRight'] && bike.y + bike.height < canvas.height) {
                 bike.y += bike.speed;
             }
             
@@ -110,10 +133,22 @@
                 reachedTop = true;
             }
             
-            if (frame % 100 === 0) spawnObstacle();
-            gameSpeed += 0.001;
-            frame++;
+            if (frame % 100 === 0) {
+                spawnObstacle();
+                if (frame % 400 === 0) {
+                    gameSpeed += 1;
+                    speedIncreaseCount++;
+                }
+            }
             
+            if (speedIncreaseCount >= 4) {
+                gameRunning = false;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawIlluminatiEye();
+                document.getElementById("endSound").play();
+            }
+            
+            frame++;
             requestAnimationFrame(gameLoop);
         }
         
