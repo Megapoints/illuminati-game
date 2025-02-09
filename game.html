@@ -125,10 +125,27 @@
 
         function drawObstacles() {
             obstacles.forEach((obstacle, index) => {
+                if (
+                    bike.x < obstacle.x + obstacle.width &&
+                    bike.x + bike.width > obstacle.x &&
+                    bike.y < obstacle.y + obstacle.height &&
+                    bike.y + bike.height > obstacle.y
+                ) {
+                    if (obstacle.type === "alien") {
+                        document.getElementById("hitSound").play();
+                    } else if (obstacle.type === "rock") {
+                        document.getElementById("rockHitSound").play();
+                    }
+                    setTimeout(startGame, 500); // Restart game after a short delay
+                    return;
+                }
+            obstacles.forEach((obstacle, index) => {
                 obstacle.x -= gameSpeed;
                 let img = obstacle.type === "alien" ? alienImg : rockImg;
                 ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
                 if (obstacle.x + obstacle.width < 0) {
+                    if (obstacle.type === "alien") passedAliens++;
+                    else passedRocks++;
                     if (obstacle.type === "alien") passedAliens++;
                     else passedRocks++;
                     obstacles.splice(index, 1);
