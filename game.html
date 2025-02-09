@@ -124,6 +124,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
+            drawIlluminatiEye();
             
             if (keys['ArrowUp'] && bike.y > 0) {
                 bike.y -= bike.speed;
@@ -136,23 +137,37 @@
                 obstacle.x -= gameSpeed;
             });
             
-            if (frame % (120 - speedIncreaseCount * 10) === 0) {
-                for (let i = 0; i < speedIncreaseCount + 1; i++) {
-                    spawnObstacle();
-                }
-                if (frame % 600 === 0) {
+            if (illuminatiEye && bike.x + bike.width > illuminatiEye.x) {
+                gameRunning = false;
+                document.getElementById("endSound").play();
+                document.getElementById("coordinates").style.display = "block";
+                document.getElementById("coordinates").style.opacity = 1;
+            }
+            
+            if (frame % 180 === 0) {
+                spawnObstacle();
+                if (frame % 900 === 0) {
                     gameSpeed += 0.3;
                     speedIncreaseCount++;
                     if (speedIncreaseCount >= 2) {
-                        gameRunning = false;
                         spawnIlluminatiEye();
-                        document.getElementById("endSound").play();
                     }
                 }
             }
             
             frame++;
             requestAnimationFrame(gameLoop);
+        }
+
+        function spawnIlluminatiEye() {
+            illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
+            function moveEye() {
+                if (illuminatiEye.x > -illuminatiEye.width) {
+                    illuminatiEye.x -= illuminatiEye.speed;
+                    requestAnimationFrame(moveEye);
+                }
+            }
+            moveEye();
         }
     </script>
 </body>
