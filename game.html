@@ -124,7 +124,9 @@
         }
 
         function drawObstacles() {
-            obstacles.forEach((obstacle, index) => {
+            
+                let img = obstacle.type === "alien" ? alienImg : rockImg;
+                ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
                 if (
                     bike.x < obstacle.x + obstacle.width &&
                     bike.x + bike.width > obstacle.x &&
@@ -162,6 +164,7 @@
                 if (obstacle.x + obstacle.width < 0) {
                     if (obstacle.type === "alien") passedAliens++;
                     else passedRocks++;
+                    obstacles.splice(index, 1);
                     if (obstacle.type === "alien") passedAliens++;
                     else passedRocks++;
                     obstacles.splice(index, 1);
