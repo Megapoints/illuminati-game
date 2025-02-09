@@ -104,6 +104,7 @@
             frame = 0;
             illuminatiEye = null;
             gameRunning = true;
+            document.getElementById("backgroundMusic").play();
             gameLoop();
         }
 
@@ -126,8 +127,8 @@
         }
 
         function resetGame() {
-            document.getElementById("startMessage").style.display = "block";
             gameRunning = false;
+            document.getElementById("startMessage").style.display = "block";
         }
 
         function gameLoop() {
@@ -152,7 +153,7 @@
                     bike.y + bike.height > obstacle.y
                 ) {
                     document.getElementById(obstacle.type === "rock" ? "rockHitSound" : "hitSound").play();
-                    resetGame();
+                    setTimeout(() => resetGame(), 500);
                 }
             });
             
