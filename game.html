@@ -33,7 +33,7 @@
     <p id="startText">Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
-    <audio id="backgroundMusic" loop>
+    <audio id="backgroundMusic" loop autoplay>
         <source src="background-scary.mp4" type="audio/mp4">
         <source src="background-scary.ogg" type="audio/ogg">
         <source src="background-scary.wav" type="audio/wav">
@@ -137,6 +137,15 @@
                 obstacle.x -= gameSpeed;
             });
             
+            if (frame === 2700) {
+                gameSpeed = 3;
+                speedIncreaseCount = 1;
+            }
+            
+            if (frame === 5400) {
+                spawnIlluminatiEye();
+            }
+            
             if (illuminatiEye && bike.x + bike.width > illuminatiEye.x) {
                 gameRunning = false;
                 document.getElementById("endSound").play();
@@ -144,15 +153,8 @@
                 document.getElementById("coordinates").style.opacity = 1;
             }
             
-            if (frame % 180 === 0) {
+            if (frame % 180 === 0 && frame < 5400) {
                 spawnObstacle();
-                if (frame % 900 === 0) {
-                    gameSpeed += 0.3;
-                    speedIncreaseCount++;
-                    if (speedIncreaseCount >= 2) {
-                        spawnIlluminatiEye();
-                    }
-                }
             }
             
             frame++;
