@@ -62,7 +62,7 @@
         let gameRunning = false;
         let bike, obstacles, gameSpeed, speedIncreaseCount, frame, illuminatiEye;
         let keys = {};
-        let passedAliens = 0, passedRocks = 0;
+        let passedalienImg = 0, passedalienImg = 0;
         let imagesLoaded = 0;
         
         const bikeImg = new Image();
@@ -106,7 +106,7 @@
             frame = 0;
             illuminatiEye = null;
             passedAliens = 0;
-            passedRocks = 0;
+            passedalienImg = 0;
             gameRunning = true;
             document.getElementById("backgroundMusic").play();
             gameLoop();
@@ -117,7 +117,7 @@
         }
 
         function spawnObstacle() {
-            const type = Math.random() > 0.5 ? "alien" : "rock";
+            const type = Math.random() > 0.5 ? "alienImg" : "rock.png";
             const yPosition = Math.random() * (canvas.height - 40);
             let sizeIncrease = speedIncreaseCount * 2;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
@@ -126,11 +126,11 @@
         function drawObstacles() {
             obstacles.forEach((obstacle, index) => {
                 obstacle.x -= 1 + gameSpeed;
-                let img = obstacle.type === "alien" ? alienImg : rockImg;
+                let img = obstacle.type === "alienImg" ? alienImg : rockImg;
                 ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
                 
                 if (obstacle.x + obstacle.width < 0) {
-                    if (obstacle.type === "alien") passedAliens++;
+                    if (obstacle.type === "alienImg") passedAliens++;
                     else passedRocks++;
                     obstacles.splice(index, 1);
                 }
