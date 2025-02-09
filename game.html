@@ -108,7 +108,7 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 4;
+            let sizeIncrease = speedIncreaseCount * 2;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
@@ -119,23 +119,11 @@
             });
         }
 
-        function spawnIlluminatiEye() {
-            illuminatiEye = { x: canvas.width, y: 0, width: 100, height: canvas.height, speed: 1 };
-        }
-
-        function drawIlluminatiEye() {
-            if (illuminatiEye) {
-                ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
-                illuminatiEye.x -= illuminatiEye.speed;
-            }
-        }
-
         function gameLoop() {
             if (!gameRunning || !gameStarted) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
-            drawIlluminatiEye();
             
             if (keys['ArrowUp'] && bike.y > 0) {
                 bike.y -= bike.speed;
@@ -148,12 +136,12 @@
                 obstacle.x -= gameSpeed;
             });
             
-            if (frame % 100 === 0) {
-                for (let i = 0; i < speedIncreaseCount + 2; i++) {
+            if (frame % (120 - speedIncreaseCount * 10) === 0) {
+                for (let i = 0; i < speedIncreaseCount + 1; i++) {
                     spawnObstacle();
                 }
-                if (frame % 500 === 0) {
-                    gameSpeed += 0.5;
+                if (frame % 600 === 0) {
+                    gameSpeed += 0.3;
                     speedIncreaseCount++;
                     if (speedIncreaseCount >= 2) {
                         gameRunning = false;
