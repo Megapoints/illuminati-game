@@ -46,6 +46,15 @@
     <p id="startMessage">Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
+    <audio id="backgroundMusic" loop autoplay>
+        <source src="background-scary.mp4" type="audio/mp4">
+    </audio>
+    <audio id="hitSound">
+        <source src="hit-sound.mp4" type="audio/mp4">
+    </audio>
+    <audio id="rockHitSound">
+        <source src="rock-hit.mp4" type="audio/mp4">
+    </audio>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -116,21 +125,9 @@
             });
         }
 
-        function spawnIlluminatiEye() {
-            illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
-        }
-
-        function drawIlluminatiEye() {
-            if (illuminatiEye) {
-                ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
-                illuminatiEye.x -= illuminatiEye.speed;
-                if (illuminatiEye.x + illuminatiEye.width < 0) {
-                    setTimeout(() => {
-                        document.getElementById("coordinates").style.display = "block";
-                        document.getElementById("coordinates").style.opacity = 1;
-                    }, 5000);
-                }
-            }
+        function resetGame() {
+            document.getElementById("startMessage").style.display = "block";
+            gameRunning = false;
         }
 
         function gameLoop() {
@@ -138,7 +135,6 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
-            drawIlluminatiEye();
             
             if (keys['ArrowUp'] && bike.y > 0) {
                 bike.y -= bike.speed;
@@ -149,15 +145,22 @@
             
             obstacles.forEach(obstacle => {
                 obstacle.x -= gameSpeed;
+                if (
+                    bike.x < obstacle.x + obstacle.width &&
+                    bike.x + bike.width > obstacle.x &&
+                    bike.y < obstacle.y + obstacle.height &&
+                    bike.y + bike.height > obstacle.y
+                ) {
+                    document.getElementById(obstacle.type === "rock" ? "rockHitSound" : "hitSound").play();
+                    resetGame();
+                }
             });
             
             if (frame % 180 === 0) {
                 spawnObstacle();
             }
-            
-            if (speedIncreaseCount >= 8) {
-                gameRunning = false;
-                spawnIlluminatiEye();
+            if (frame % 1200 === 0) {
+                gameSpeed += 0.2;
             }
             
             frame++;
