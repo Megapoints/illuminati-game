@@ -56,14 +56,14 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         
-        let bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
-        let obstacles = [];
-        let gameSpeed = 2;
-        let speedIncreaseCount = 0;
+        let bike;
+        let obstacles;
+        let gameSpeed;
+        let speedIncreaseCount;
         let keys = {};
-        let gameRunning = true;
-        let frame = 0;
-        let illuminatiEye = null;
+        let gameRunning;
+        let frame;
+        let illuminatiEye;
         let bikeImg = new Image();
         bikeImg.src = 'bike.png';
         let alienImg = new Image();
@@ -75,6 +75,18 @@
         
         document.addEventListener("keydown", (e) => { keys[e.key] = true; });
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
+
+        function resetGame() {
+            bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
+            obstacles = [];
+            gameSpeed = 2;
+            speedIncreaseCount = 0;
+            gameRunning = true;
+            frame = 0;
+            illuminatiEye = null;
+            document.getElementById("coordinates").style.display = "none";
+            gameLoop();
+        }
 
         function drawBike() {
             ctx.drawImage(bikeImg, bike.x, bike.y, bike.width, bike.height);
@@ -156,7 +168,7 @@
             requestAnimationFrame(gameLoop);
         }
         
-        gameLoop();
+        resetGame();
     </script>
 </body>
 </html>
