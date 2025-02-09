@@ -165,7 +165,7 @@
                 gameSpeed += 0.1;
                 speedIncreaseCount++;
             }
-            if (frame === 3600) {
+            if (passedAliens >= 4 && passedRocks >= 4 && !illuminatiEye) {
                 spawnIlluminatiEye();
             }
             if (frame % 60 === 0) {
