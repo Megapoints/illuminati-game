@@ -147,12 +147,12 @@
             if (keys['ArrowDown'] && bike.y + bike.height < canvas.height) {
                 bike.y += bike.speed;
             }
-            if (frame % 60 === 0) {
-                gameSpeed += 0.5;
+            if (frame % 120 === 0) {
+                gameSpeed += 0.3;
                 speedIncreaseCount++;
                 spawnObstacle();
             }
-            if (speedIncreaseCount >= 2 && !illuminatiEye) {
+            if (speedIncreaseCount >= 5 && !illuminatiEye) {
                 illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
             }
             if (illuminatiEye) {
