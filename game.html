@@ -26,24 +26,32 @@
             opacity: 0;
             transition: opacity 1s ease-in-out;
         }
+        #startMessage {
+            font-size: 20px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body>
     <h1>Ride to the Truth</h1>
-    <p id="startText">Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
-    <audio id="backgroundMusic" loop autoplay>
+    <div id="startMessage">Press ENTER to start</div>
+    <audio id="backgroundMusic" loop>
         <source src="background-scary.mp4" type="audio/mp4">
         <source src="background-scary.ogg" type="audio/ogg">
         <source src="background-scary.wav" type="audio/wav">
     </audio>
-    <audio id="hitSound" preload="auto" onplay="pauseBackground()" onended="resumeBackground()">
+    <audio id="hitSound" preload="auto">
         <source src="hit-sound.mp4" type="audio/mp4">
         <source src="hit-sound.ogg" type="audio/ogg">
         <source src="hit-sound.wav" type="audio/wav">
     </audio>
-    <audio id="rockHitSound" preload="auto" onplay="pauseBackground()" onended="resumeBackground()">
+    <audio id="rockHitSound" preload="auto">
         <source src="rock-hit.mp4" type="audio/mp4">
         <source src="rock-hit.ogg" type="audio/ogg">
         <source src="rock-hit.wav" type="audio/wav">
@@ -56,9 +64,16 @@
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
+        let gameStarted = false;
+        let gameRunning = false;
         
-        let bike, obstacles, gameSpeed, speedIncreaseCount, gameRunning, frame, illuminatiEye;
+        let bike;
+        let obstacles;
+        let gameSpeed;
+        let speedIncreaseCount;
         let keys = {};
+        let frame;
+        let illuminatiEye;
         let bikeImg = new Image();
         bikeImg.src = 'bike.png';
         let alienImg = new Image();
@@ -67,21 +82,13 @@
         rockImg.src = 'rock.png';
         let illuminatiImg = new Image();
         illuminatiImg.src = 'illuminati-eye.png';
-        let gameStarted = false;
         
-        function pauseBackground() {
-            document.getElementById("backgroundMusic").pause();
-        }
-        
-        function resumeBackground() {
-            document.getElementById("backgroundMusic").play();
-        }
-        
-        document.addEventListener("keydown", (e) => {
+        document.addEventListener("keydown", (e) => { 
             keys[e.key] = true;
-            if (e.key === "Enter" && !gameStarted) {
+            if (e.key === "Enter" && !gameRunning) {
                 gameStarted = true;
-                document.getElementById("startText").style.display = "none";
+                gameRunning = true;
+                document.getElementById("startMessage").style.display = "none";
                 document.getElementById("backgroundMusic").play();
                 resetGame();
             }
@@ -94,15 +101,10 @@
             obstacles = [];
             gameSpeed = 2;
             speedIncreaseCount = 0;
-            gameRunning = true;
             frame = 0;
             illuminatiEye = null;
             document.getElementById("coordinates").style.display = "none";
             gameLoop();
-        }
-
-        function drawBike() {
-            ctx.drawImage(bikeImg, bike.x, bike.y, bike.width, bike.height);
         }
 
         function spawnObstacle() {
@@ -112,15 +114,8 @@
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
-        function drawObstacles() {
-            obstacles.forEach(obstacle => {
-                let img = obstacle.type === "alien" ? alienImg : rockImg;
-                ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-            });
-        }
-
         function gameLoop() {
-            if (!gameRunning || !gameStarted) return;
+            if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
@@ -135,41 +130,33 @@
             
             obstacles.forEach(obstacle => {
                 obstacle.x -= gameSpeed;
+                if (bike.x < obstacle.x + obstacle.width && bike.x + bike.width > obstacle.x && bike.y < obstacle.y + obstacle.height && bike.y + bike.height > obstacle.y) {
+                    document.getElementById(obstacle.type === "rock" ? "rockHitSound" : "hitSound").play();
+                    gameRunning = false;
+                    document.getElementById("startMessage").style.display = "block";
+                }
             });
             
-            if (frame === 2700) {
-                gameSpeed = 3;
-                speedIncreaseCount = 1;
+            if (frame % 200 === 0) {
+                spawnObstacle();
+                if (frame % 1600 === 0) {
+                    gameSpeed += 0.2;
+                    speedIncreaseCount++;
+                }
             }
             
-            if (frame === 5400) {
-                spawnIlluminatiEye();
-            }
-            
-            if (illuminatiEye && bike.x + bike.width > illuminatiEye.x) {
+            if (speedIncreaseCount >= 8) {
                 gameRunning = false;
                 document.getElementById("endSound").play();
-                document.getElementById("coordinates").style.display = "block";
-                document.getElementById("coordinates").style.opacity = 1;
-            }
-            
-            if (frame % 180 === 0 && frame < 5400) {
-                spawnObstacle();
+                spawnIlluminatiEye();
+                setTimeout(() => {
+                    document.getElementById("coordinates").style.display = "block";
+                    document.getElementById("coordinates").style.opacity = 1;
+                }, 5000);
             }
             
             frame++;
             requestAnimationFrame(gameLoop);
-        }
-
-        function spawnIlluminatiEye() {
-            illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
-            function moveEye() {
-                if (illuminatiEye.x > -illuminatiEye.width) {
-                    illuminatiEye.x -= illuminatiEye.speed;
-                    requestAnimationFrame(moveEye);
-                }
-            }
-            moveEye();
         }
     </script>
 </body>
