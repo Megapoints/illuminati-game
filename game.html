@@ -62,7 +62,7 @@
         let gameRunning = false;
         let bike, obstacles, gameSpeed, speedIncreaseCount, frame, illuminatiEye;
         let keys = {};
-        let passedalienImg = 0, passedalienImg = 0;
+        let passedAliens = 0, passedRocks = 0;
         let imagesLoaded = 0;
         
         const bikeImg = new Image();
@@ -117,7 +117,7 @@
         }
 
         function spawnObstacle() {
-            const type = Math.random() > 0.5 ? "alienImg" : "rock.png";
+            const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
             let sizeIncrease = speedIncreaseCount * 4;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
@@ -126,18 +126,34 @@
         function drawObstacles() {
             obstacles.forEach((obstacle, index) => {
                 obstacle.x -= 1 + gameSpeed;
-                let img = obstacle.type === "alienImg" ? alienImg : rockImg;
+                let img = obstacle.type === "alien" ? alienImg : rockImg;
                 ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
                 
                 if (obstacle.x + obstacle.width < 0) {
-                    if (obstacle.type === "alienImg") passedAliens++;
+                    if (obstacle.type === "alien") passedAliens++;
                     else passedRocks++;
                     obstacles.splice(index, 1);
                 }
             });
         }
 
-        function gameLoop() {
+        function drawIlluminatiEye() {
+    if (illuminatiEye) {
+        ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
+        illuminatiEye.x -= 1 + gameSpeed;
+        if (
+            bike.x < illuminatiEye.x + illuminatiEye.width &&
+            bike.x + bike.width > illuminatiEye.x &&
+            bike.y < illuminatiEye.y + illuminatiEye.height &&
+            bike.y + bike.height > illuminatiEye.y
+        ) {
+            document.getElementById("megaText").style.display = "block";
+            gameRunning = false;
+        }
+    }
+}
+
+function gameLoop() {
             if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
