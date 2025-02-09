@@ -36,40 +36,42 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         
-        let bike = { x: 100, y: 300, width: 50, height: 30, speed: 2 };
+        let bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
         let obstacles = [];
         let gameSpeed = 2;
         let keys = {};
         let reachedTop = false;
         let gameRunning = true;
         let frame = 0;
+        let bikeImg = new Image();
+        bikeImg.src = 'bike.png';
+        let alienImg = new Image();
+        alienImg.src = 'alien.png';
+        let rockImg = new Image();
+        rockImg.src = 'rock.png';
 
         document.addEventListener("keydown", (e) => { keys[e.key] = true; });
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
         function drawBike() {
-            ctx.fillStyle = "white";
-            ctx.beginPath();
-            ctx.arc(bike.x + 10, bike.y + 20, 10, 0, Math.PI * 2);
-            ctx.arc(bike.x + 40, bike.y + 20, 10, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillRect(bike.x + 15, bike.y, 20, 20);
+            ctx.drawImage(bikeImg, bike.x, bike.y, bike.width, bike.height);
         }
 
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
-            obstacles.push({ x: canvas.width, y: 320, width: 40, height: 40, type });
+            const yPosition = Math.random() * (canvas.height - 40);
+            obstacles.push({ x: canvas.width, y: yPosition, width: 40, height: 40, type });
         }
 
         function drawObstacles() {
             obstacles.forEach(obstacle => {
-                ctx.fillStyle = obstacle.type === "alien" ? "green" : "gray";
-                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                let img = obstacle.type === "alien" ? alienImg : rockImg;
+                ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
             });
         }
 
         function resetGame() {
-            bike.y = 300;
+            bike.y = 200;
             obstacles = [];
             gameSpeed = 2;
             reachedTop = false;
@@ -82,8 +84,11 @@
             drawBike();
             drawObstacles();
 
-            if (keys['ArrowLeft'] || keys['ArrowRight']) {
+            if (keys['ArrowLeft']) {
                 bike.y -= bike.speed;
+            }
+            if (keys['ArrowRight']) {
+                bike.y += bike.speed;
             }
             
             obstacles.forEach(obstacle => {
