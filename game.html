@@ -145,7 +145,7 @@
         }
 
         function gameLoop() {
-            if (totalFrames >= 1000 && !illuminatiEye) {
+            if (totalFrames >= 600 && !illuminatiEye) {
                 illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
             }
             if (!gameRunning) return;
@@ -195,6 +195,7 @@
             }
             if (frame % 120 === 0) {
                 gameSpeed += 0.3;
+                speedIncreaseCount++;
                 speedIncreaseCount++;
                 gameSpeed += 0.3;
             }
