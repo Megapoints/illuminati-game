@@ -25,21 +25,33 @@
             color: red;
             opacity: 0;
             transition: opacity 1s ease-in-out;
+            animation: flash 1s infinite alternate;
+        }
+        @keyframes flash {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        #startMessage {
+            font-size: 20px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
 <body>
     <h1>Ride to the Truth</h1>
-    <p id="startText">Press ENTER to start</p>
+    <p id="startMessage">Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-        
-        let bike, obstacles, gameSpeed, speedIncreaseCount, gameRunning, frame, illuminatiEye;
+        let gameRunning = false;
+        let bike, obstacles, gameSpeed, speedIncreaseCount, frame, illuminatiEye;
         let keys = {};
-        let gameStarted = false;
         let imagesLoaded = 0;
         
         const bikeImg = new Image();
@@ -61,29 +73,28 @@
         function checkImagesLoaded() {
             imagesLoaded++;
             if (imagesLoaded === 4) {
-                document.getElementById("startText").style.display = "block";
+                document.getElementById("startMessage").style.display = "block";
             }
         }
         
         document.addEventListener("keydown", (e) => {
             keys[e.key] = true;
-            if (e.key === "Enter" && !gameStarted) {
-                gameStarted = true;
-                document.getElementById("startText").style.display = "none";
-                resetGame();
+            if (e.key === "Enter" && !gameRunning) {
+                document.getElementById("startMessage").style.display = "none";
+                startGame();
             }
         });
         
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
-        function resetGame() {
+        function startGame() {
             bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
             obstacles = [];
             gameSpeed = 2;
             speedIncreaseCount = 0;
-            gameRunning = true;
             frame = 0;
             illuminatiEye = null;
+            gameRunning = true;
             gameLoop();
         }
 
@@ -105,11 +116,29 @@
             });
         }
 
+        function spawnIlluminatiEye() {
+            illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
+        }
+
+        function drawIlluminatiEye() {
+            if (illuminatiEye) {
+                ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
+                illuminatiEye.x -= illuminatiEye.speed;
+                if (illuminatiEye.x + illuminatiEye.width < 0) {
+                    setTimeout(() => {
+                        document.getElementById("coordinates").style.display = "block";
+                        document.getElementById("coordinates").style.opacity = 1;
+                    }, 5000);
+                }
+            }
+        }
+
         function gameLoop() {
-            if (!gameRunning || !gameStarted) return;
+            if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
+            drawIlluminatiEye();
             
             if (keys['ArrowUp'] && bike.y > 0) {
                 bike.y -= bike.speed;
@@ -124,6 +153,11 @@
             
             if (frame % 180 === 0) {
                 spawnObstacle();
+            }
+            
+            if (speedIncreaseCount >= 8) {
+                gameRunning = false;
+                spawnIlluminatiEye();
             }
             
             frame++;
