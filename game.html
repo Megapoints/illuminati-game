@@ -143,7 +143,7 @@
         }
 
         function gameLoop() {
-            if (speedIncreaseCount >= 5 && !illuminatiEye) {
+            if (speedIncreaseCount >= 5 && !illuminatiEye && gameRunning) {
                 illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
             }
             if (!gameRunning) return;
