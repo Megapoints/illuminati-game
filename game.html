@@ -97,6 +97,7 @@
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
         function startGame() {
+            illuminatiEye = null;
             bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
             obstacles = [];
             gameSpeed = 2;
@@ -129,11 +130,41 @@
         function resetGame() {
             gameRunning = false;
             document.getElementById("startMessage").style.display = "block";
+            document.addEventListener("keydown", restartGame, { once: true });
+        }
+
+        function restartGame(event) {
+            if (event.key === "Enter") {
+                document.getElementById("startMessage").style.display = "none";
+                startGame();
+            }
+            gameRunning = false;
+            document.getElementById("startMessage").style.display = "block";
         }
 
         function gameLoop() {
+            if (speedIncreaseCount >= 5 && !illuminatiEye) {
+                illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
+            }
             if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (illuminatiEye) {
+                ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
+                illuminatiEye.x -= illuminatiEye.speed;
+                if (
+                    bike.x < illuminatiEye.x + illuminatiEye.width &&
+                    bike.x + bike.width > illuminatiEye.x &&
+                    bike.y < illuminatiEye.y + illuminatiEye.height &&
+                    bike.y + bike.height > illuminatiEye.y
+                ) {
+                    document.getElementById("coordinates").style.display = "block";
+                    document.getElementById("coordinates").style.opacity = 1;
+                    document.getElementById("startMessage").textContent = "MEGA";
+                    document.getElementById("startMessage").style.color = "red";
+                    document.getElementById("startMessage").style.animation = "flash 1s infinite alternate";
+                    gameRunning = false;
+                }
+            }
             drawBike();
             drawObstacles();
             
@@ -157,11 +188,11 @@
                 }
             });
             
-            if (frame % 180 === 0) {
+            if (frame % 110 === 0) {
                 spawnObstacle();
             }
-            if (frame % 1200 === 0) {
-                gameSpeed += 0.2;
+            if (frame % 120 === 0) {
+                gameSpeed += 0.3;
             }
             
             frame++;
