@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>???</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hidden-message {
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            transition: opacity 2s;
+        }
+        .password-container {
+            margin-top: 20vh;
+        }
+        .password-input {
+            background: black;
+            color: white;
+            border: 2px solid white;
+            padding: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enter the Password</h1>
+    <div class="password-container">
+        <input type="password" class="password-input" id="password" placeholder="********">
+        <button onclick="checkPassword()">Submit</button>
+    </div>
+    <div class="hidden-message" id="hiddenMessage">The truth is near...</div>
+    <audio id="scarySound" src="scary-sound.mp3" preload="auto"></audio>
+    <script>
+        function saveFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            if (password === 'illuminati') {
+                window.location.href = 'game.html';
+            } else {
+                document.getElementById('hiddenMessage').style.opacity = 1;
+                document.getElementById('scarySound').play();
+            }
+        }
+    </script>
+</body>
+</html>
