@@ -18,7 +18,7 @@
             margin: auto;
             border: 2px solid white;
         }
-        #coordinates {
+        #coordinates, #megaText {
             display: none;
             font-size: 24px;
             margin-top: 20px;
@@ -46,6 +46,7 @@
     <p id="startMessage">Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
+    <div id="megaText">MEGA</div>
     <audio id="backgroundMusic" loop autoplay>
         <source src="background-scary.mp4" type="audio/mp4">
     </audio>
@@ -61,6 +62,7 @@
         let gameRunning = false;
         let bike, obstacles, gameSpeed, speedIncreaseCount, frame, illuminatiEye;
         let keys = {};
+        let passedAliens = 0, passedRocks = 0;
         let imagesLoaded = 0;
         
         const bikeImg = new Image();
@@ -103,6 +105,8 @@
             speedIncreaseCount = 0;
             frame = 0;
             illuminatiEye = null;
+            passedAliens = 0;
+            passedRocks = 0;
             gameRunning = true;
             document.getElementById("backgroundMusic").play();
             gameLoop();
@@ -120,15 +124,17 @@
         }
 
         function drawObstacles() {
-            obstacles.forEach(obstacle => {
+            obstacles.forEach((obstacle, index) => {
+                obstacle.x -= 1 + gameSpeed;
                 let img = obstacle.type === "alien" ? alienImg : rockImg;
                 ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                
+                if (obstacle.x + obstacle.width < 0) {
+                    if (obstacle.type === "alien") passedAliens++;
+                    else passedRocks++;
+                    obstacles.splice(index, 1);
+                }
             });
-        }
-
-        function resetGame() {
-            gameRunning = false;
-            document.getElementById("startMessage").style.display = "block";
         }
 
         function gameLoop() {
@@ -144,24 +150,12 @@
                 bike.y += bike.speed;
             }
             
-            obstacles.forEach(obstacle => {
-                obstacle.x -= gameSpeed;
-                if (
-                    bike.x < obstacle.x + obstacle.width &&
-                    bike.x + bike.width > obstacle.x &&
-                    bike.y < obstacle.y + obstacle.height &&
-                    bike.y + bike.height > obstacle.y
-                ) {
-                    document.getElementById(obstacle.type === "rock" ? "rockHitSound" : "hitSound").play();
-                    setTimeout(() => resetGame(), 500);
-                }
-            });
-            
-            if (frame % 180 === 0) {
-                spawnObstacle();
+            if (frame % 60 === 0) {
+                gameSpeed += 0.1;
+                speedIncreaseCount++;
             }
-            if (frame % 1200 === 0) {
-                gameSpeed += 0.2;
+            if (frame % 60 === 0) {
+                spawnObstacle();
             }
             
             frame++;
