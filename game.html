@@ -99,7 +99,7 @@
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
         function startGame() {
-            bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
+            bike = { x: 100, y: 200, width: 50, height: 30, speed: 3 };
             obstacles = [];
             gameSpeed = 2;
             speedIncreaseCount = 0;
@@ -119,16 +119,15 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 2;
+            let sizeIncrease = speedIncreaseCount * 5;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
         function drawObstacles() {
             obstacles.forEach((obstacle, index) => {
-                obstacle.x -= 1 + gameSpeed;
+                obstacle.x -= gameSpeed;
                 let img = obstacle.type === "alien" ? alienImg : rockImg;
                 ctx.drawImage(img, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-                
                 if (obstacle.x + obstacle.width < 0) {
                     if (obstacle.type === "alien") passedAliens++;
                     else passedRocks++;
@@ -142,22 +141,28 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
-            
             if (keys['ArrowUp'] && bike.y > 0) {
                 bike.y -= bike.speed;
             }
             if (keys['ArrowDown'] && bike.y + bike.height < canvas.height) {
                 bike.y += bike.speed;
             }
-            
             if (frame % 60 === 0) {
-                gameSpeed += 0.1;
+                gameSpeed += 0.5;
                 speedIncreaseCount++;
-            }
-            if (frame % 60 === 0) {
                 spawnObstacle();
             }
-            
+            if (speedIncreaseCount >= 2 && !illuminatiEye) {
+                illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
+            }
+            if (illuminatiEye) {
+                ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
+                illuminatiEye.x -= illuminatiEye.speed;
+                if (bike.x < illuminatiEye.x + illuminatiEye.width && bike.x + bike.width > illuminatiEye.x) {
+                    document.getElementById("megaText").style.display = "block";
+                    gameRunning = false;
+                }
+            }
             frame++;
             requestAnimationFrame(gameLoop);
         }
