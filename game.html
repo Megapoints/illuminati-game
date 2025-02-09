@@ -161,12 +161,15 @@
                 bike.y += bike.speed;
             }
             
-            if (frame % 600 === 0) {
-                gameSpeed += 0.2;
+            if (frame % 60 === 0) {
+                gameSpeed += 0.1;
                 speedIncreaseCount++;
             }
-            if (frame % 6000 === 0) {
+            if (frame % 120 === 0) {
                 spawnIlluminatiEye();
+            }
+            if (frame % 60 === 0) {
+                spawnObstacle();
             }
             
             frame++;
