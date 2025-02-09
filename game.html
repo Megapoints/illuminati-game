@@ -30,9 +30,10 @@
 </head>
 <body>
     <h1>Ride to the Truth</h1>
+    <p>Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
-    <audio id="backgroundMusic" loop autoplay>
+    <audio id="backgroundMusic" loop>
         <source src="background-scary.mp4" type="audio/mp4">
         <source src="background-scary.ogg" type="audio/ogg">
         <source src="background-scary.wav" type="audio/wav">
@@ -56,14 +57,8 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         
-        let bike;
-        let obstacles;
-        let gameSpeed;
-        let speedIncreaseCount;
+        let bike, obstacles, gameSpeed, speedIncreaseCount, gameRunning, frame, illuminatiEye;
         let keys = {};
-        let gameRunning;
-        let frame;
-        let illuminatiEye;
         let bikeImg = new Image();
         bikeImg.src = 'bike.png';
         let alienImg = new Image();
@@ -72,8 +67,18 @@
         rockImg.src = 'rock.png';
         let illuminatiImg = new Image();
         illuminatiImg.src = 'illuminati-eye.png';
+        let gameStarted = false;
         
-        document.addEventListener("keydown", (e) => { keys[e.key] = true; });
+        document.addEventListener("keydown", (e) => {
+            keys[e.key] = true;
+            if (e.key === "Enter" && !gameStarted) {
+                gameStarted = true;
+                document.querySelector("p").style.display = "none";
+                document.getElementById("backgroundMusic").play();
+                resetGame();
+            }
+        });
+        
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
         function resetGame() {
@@ -95,7 +100,7 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 5;
+            let sizeIncrease = speedIncreaseCount * 3; // Slower growth rate
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
@@ -106,26 +111,11 @@
             });
         }
 
-        function spawnIlluminatiEye() {
-            illuminatiEye = { x: canvas.width, y: 0, width: 100, height: canvas.height, speed: 1 };
-        }
-
-        function drawIlluminatiEye() {
-            if (illuminatiEye) {
-                ctx.drawImage(illuminatiImg, illuminatiEye.x, illuminatiEye.y, illuminatiEye.width, illuminatiEye.height);
-                illuminatiEye.x -= illuminatiEye.speed;
-                if (illuminatiEye.x + illuminatiEye.width < 0) {
-                    document.getElementById("coordinates").style.opacity = 1;
-                }
-            }
-        }
-
         function gameLoop() {
-            if (!gameRunning) return;
+            if (!gameRunning || !gameStarted) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBike();
             drawObstacles();
-            drawIlluminatiEye();
             
             if (keys['ArrowUp'] && bike.y > 0) {
                 bike.y -= bike.speed;
@@ -137,38 +127,24 @@
             obstacles.forEach(obstacle => {
                 obstacle.x -= gameSpeed;
                 if (bike.x < obstacle.x + obstacle.width && bike.x + bike.width > obstacle.x && bike.y < obstacle.y + obstacle.height && bike.y + bike.height > obstacle.y) {
-                    if (obstacle.type === "rock") {
-                        document.getElementById("rockHitSound").play();
-                    } else {
-                        document.getElementById("hitSound").play();
-                    }
+                    document.getElementById(obstacle.type === "rock" ? "rockHitSound" : "hitSound").play();
+                    gameStarted = false;
+                    document.querySelector("p").style.display = "block";
                     resetGame();
                 }
             });
             
-            if (frame % 100 === 0) {
+            if (frame % 150 === 0) { // Slower obstacle spawn rate
                 spawnObstacle();
-                if (frame % 400 === 0) {
-                    gameSpeed += 1;
+                if (frame % 600 === 0) { // Slower speed increase rate
+                    gameSpeed += 0.5;
                     speedIncreaseCount++;
                 }
-            }
-            
-            if (speedIncreaseCount >= 8) {
-                gameRunning = false;
-                document.getElementById("endSound").play();
-                spawnIlluminatiEye();
-                setTimeout(() => {
-                    document.getElementById("coordinates").style.display = "block";
-                    document.getElementById("coordinates").style.opacity = 1;
-                }, 5000);
             }
             
             frame++;
             requestAnimationFrame(gameLoop);
         }
-        
-        resetGame();
     </script>
 </body>
 </html>
