@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Ride</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            overflow: hidden;
+        }
+        canvas {
+            background: #111;
+            display: block;
+            margin: auto;
+        }
+        #coordinates {
+            display: none;
+            font-size: 20px;
+            margin-top: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ride to the Truth</h1>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
+    <audio id="scarySound" src="scary-sound.mp3" preload="auto"></audio>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        let bike = { x: 100, y: 300, speed: 2 };
+        let obstacles = [ { x: 400, y: 320, width: 30, height: 30 }, { x: 600, y: 320, width: 30, height: 30 } ];
+        let keys = {};
+        let reachedTop = false;
+        
+        document.addEventListener("keydown", (e) => { keys[e.key] = true; });
+        document.addEventListener("keyup", (e) => { keys[e.key] = false; });
+        
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(bike.x, bike.y, 40, 20);
+            
+            ctx.fillStyle = "red";
+            obstacles.forEach(obstacle => {
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+            
+            if (keys['ArrowLeft'] || keys['ArrowRight']) {
+                bike.y -= bike.speed;
+            }
+            
+            if (bike.y <= 50 && !reachedTop) {
+                document.getElementById("coordinates").style.display = "block";
+                document.getElementById("scarySound").play();
+                reachedTop = true;
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        gameLoop();
+    </script>
+</body>
+</html>
