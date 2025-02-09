@@ -98,7 +98,6 @@
 
         function startGame() {
             totalFrames = 0;
-            totalFrames = 0;
             illuminatiEye = null;
             bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
             obstacles = [];
@@ -118,7 +117,7 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 2;
+            let sizeIncrease = speedIncreaseCount * 1.5;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
@@ -140,13 +139,15 @@
                 document.getElementById("startMessage").style.display = "none";
                 startGame();
             }
+                startGame();
+            }
             gameRunning = false;
             document.getElementById("startMessage").style.display = "block";
         }
 
         function gameLoop() {
-            if (totalFrames >= 1600 && !illuminatiEye) {
-                illuminatiEye = { x: canvas.width, y: 0, width: 400, height: canvas.height, speed: 0.1 };
+            if (totalFrames >= 1800 && !illuminatiEye) {
+                illuminatiEye = { x: canvas.width, y: 0, width: 500, height: canvas.height, speed: 0.1 };
             }
             if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -175,6 +176,12 @@
             }
             if (keys['ArrowDown'] && bike.y + bike.height < canvas.height) {
                 bike.y += bike.speed;
+            }
+            if (keys['ArrowRight'] && bike.x + bike.width < canvas.width) {
+                bike.x += bike.speed;
+            }
+            if (keys['ArrowLeft'] && bike.x > 0) {
+                bike.x -= bike.speed;
             }
             
             obstacles.forEach(obstacle => {
