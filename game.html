@@ -59,7 +59,7 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         let gameRunning = false;
-        let bike, obstacles, gameSpeed, speedIncreaseCount, frame, illuminatiEye;
+        let bike, obstacles, gameSpeed, speedIncreaseCount, frame, illuminatiEye, totalFrames = 0;
         let keys = {};
         let imagesLoaded = 0;
         
@@ -97,6 +97,8 @@
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
         function startGame() {
+            totalFrames = 0;
+            totalFrames = 0;
             illuminatiEye = null;
             bike = { x: 100, y: 200, width: 50, height: 30, speed: 2 };
             obstacles = [];
@@ -143,7 +145,7 @@
         }
 
         function gameLoop() {
-            if (speedIncreaseCount >= 5 && !illuminatiEye && gameRunning) {
+            if (totalFrames >= 1000 && !illuminatiEye) {
                 illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
             }
             if (!gameRunning) return;
@@ -193,9 +195,12 @@
             }
             if (frame % 120 === 0) {
                 gameSpeed += 0.3;
+                speedIncreaseCount++;
+                gameSpeed += 0.3;
             }
             
             frame++;
+            totalFrames++;
             requestAnimationFrame(gameLoop);
         }
     </script>
