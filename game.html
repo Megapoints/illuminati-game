@@ -38,12 +38,12 @@
         <source src="background-scary.ogg" type="audio/ogg">
         <source src="background-scary.wav" type="audio/wav">
     </audio>
-    <audio id="hitSound" preload="auto">
+    <audio id="hitSound" preload="auto" onplay="pauseBackground()" onended="resumeBackground()">
         <source src="hit-sound.mp4" type="audio/mp4">
         <source src="hit-sound.ogg" type="audio/ogg">
         <source src="hit-sound.wav" type="audio/wav">
     </audio>
-    <audio id="rockHitSound" preload="auto">
+    <audio id="rockHitSound" preload="auto" onplay="pauseBackground()" onended="resumeBackground()">
         <source src="rock-hit.mp4" type="audio/mp4">
         <source src="rock-hit.ogg" type="audio/ogg">
         <source src="rock-hit.wav" type="audio/wav">
@@ -69,9 +69,17 @@
         illuminatiImg.src = 'illuminati-eye.png';
         let gameStarted = false;
         
+        function pauseBackground() {
+            document.getElementById("backgroundMusic").pause();
+        }
+        
+        function resumeBackground() {
+            document.getElementById("backgroundMusic").play();
+        }
+        
         document.addEventListener("keydown", (e) => {
             keys[e.key] = true;
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && !gameStarted) {
                 gameStarted = true;
                 document.getElementById("startText").style.display = "none";
                 document.getElementById("backgroundMusic").play();
@@ -100,7 +108,7 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 3; // Slower growth rate
+            let sizeIncrease = speedIncreaseCount * 3;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
@@ -133,11 +141,17 @@
                 }
             });
             
-            if (frame % 150 === 0) { // Slower obstacle spawn rate
-                spawnObstacle();
-                if (frame % 600 === 0) { // Slower speed increase rate
+            if (frame % 150 === 0) {
+                for (let i = 0; i < speedIncreaseCount + 1; i++) {
+                    spawnObstacle();
+                }
+                if (frame % 600 === 0) {
                     gameSpeed += 0.5;
                     speedIncreaseCount++;
+                    if (speedIncreaseCount >= 3) {
+                        gameRunning = false;
+                        document.getElementById("endSound").play();
+                    }
                 }
             }
             
