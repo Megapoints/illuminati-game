@@ -119,7 +119,7 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alienImg" : "rock.png";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 2;
+            let sizeIncrease = speedIncreaseCount * 4;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
@@ -152,7 +152,7 @@
             }
             
             if (frame % 60 === 0) {
-                gameSpeed += 0.1;
+                gameSpeed += 0.3;
                 speedIncreaseCount++;
             }
             if (passedAliens >= 4 && passedRocks >= 4 && !illuminatiEye) {
