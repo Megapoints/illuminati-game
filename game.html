@@ -54,7 +54,6 @@
         let gameSpeed = 2;
         let speedIncreaseCount = 0;
         let keys = {};
-        let reachedTop = false;
         let gameRunning = true;
         let frame = 0;
         let bikeImg = new Image();
@@ -96,7 +95,6 @@
             obstacles = [];
             gameSpeed = 2;
             speedIncreaseCount = 0;
-            reachedTop = false;
             document.getElementById("coordinates").style.display = "none";
             gameRunning = true;
         }
@@ -107,10 +105,10 @@
             drawBike();
             drawObstacles();
             
-            if (keys['ArrowLeft'] && bike.y > 0) {
+            if (keys['ArrowUp'] && bike.y > 0) {
                 bike.y -= bike.speed;
             }
-            if (keys['ArrowRight'] && bike.y + bike.height < canvas.height) {
+            if (keys['ArrowDown'] && bike.y + bike.height < canvas.height) {
                 bike.y += bike.speed;
             }
             
@@ -127,12 +125,6 @@
                 }
             });
             
-            if (bike.y <= 50 && !reachedTop) {
-                document.getElementById("coordinates").style.display = "block";
-                document.getElementById("scarySound").play();
-                reachedTop = true;
-            }
-            
             if (frame % 100 === 0) {
                 spawnObstacle();
                 if (frame % 400 === 0) {
@@ -146,6 +138,7 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawIlluminatiEye();
                 document.getElementById("endSound").play();
+                document.getElementById("coordinates").style.display = "block";
             }
             
             frame++;
