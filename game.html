@@ -30,7 +30,7 @@
 </head>
 <body>
     <h1>Ride to the Truth</h1>
-    <p>Press ENTER to start</p>
+    <p id="startText">Press ENTER to start</p>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
     <audio id="backgroundMusic" loop>
@@ -71,9 +71,9 @@
         
         document.addEventListener("keydown", (e) => {
             keys[e.key] = true;
-            if (e.key === "Enter" && !gameStarted) {
+            if (e.key === "Enter") {
                 gameStarted = true;
-                document.querySelector("p").style.display = "none";
+                document.getElementById("startText").style.display = "none";
                 document.getElementById("backgroundMusic").play();
                 resetGame();
             }
@@ -129,8 +129,7 @@
                 if (bike.x < obstacle.x + obstacle.width && bike.x + bike.width > obstacle.x && bike.y < obstacle.y + obstacle.height && bike.y + bike.height > obstacle.y) {
                     document.getElementById(obstacle.type === "rock" ? "rockHitSound" : "hitSound").play();
                     gameStarted = false;
-                    document.querySelector("p").style.display = "block";
-                    resetGame();
+                    document.getElementById("startText").style.display = "block";
                 }
             });
             
