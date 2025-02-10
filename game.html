@@ -116,7 +116,7 @@
         }
 
         function spawnObstacle() {
-            const type = Math.random() > 1 ? "alien" : "rock";
+            const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
             let sizeIncrease = speedIncreaseCount * 1.2;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
