@@ -44,7 +44,7 @@
 <body>
     <h1>Ride to the Truth</h1>
     <p id="startMessage">Press ENTER to start</p>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <canvas id="gameCanvas" width="1000" height="600"></canvas>
     <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
     <audio id="backgroundMusic" loop autoplay>
         <source src="background-scary.mp4" type="audio/mp4">
@@ -118,7 +118,7 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 1.5;
+            let sizeIncrease = speedIncreaseCount * 1.3;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
@@ -145,8 +145,8 @@
         }
 
         function gameLoop() {
-            if (totalFrames >= 600 && !illuminatiEye) {
-                illuminatiEye = { x: canvas.width, y: 0, width: 200, height: canvas.height, speed: 1 };
+            if (totalFrames >= 2600 && !illuminatiEye) {
+                illuminatiEye = { x: canvas.width, y: 0, width: 400, height: canvas.height, speed: 0.2 };
             }
             if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
