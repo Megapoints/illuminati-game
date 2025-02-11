@@ -145,8 +145,8 @@
         }
 
         function gameLoop() {
-            if (totalFrames >= 2600 && !illuminatiEye) {
-                illuminatiEye = { x: canvas.width, y: 0, width: 400, height: canvas.height, speed: 0.2 };
+            if (totalFrames >= 3000 && !illuminatiEye) {
+                illuminatiEye = { x: canvas.width, y: 0, width: 800, height: canvas.height, speed: 0.2 };
             }
             if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
