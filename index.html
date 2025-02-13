@@ -40,7 +40,7 @@
     </style>
 </head>
 <body>
-    <h1>Enter the Password</h1>
+    <h1>You can only enter if you are ready</h1>
     <div class="password-container">
         <input type="password" class="password-input" id="password" placeholder="********">
         <button onclick="checkPassword()">Submit</button>
@@ -60,7 +60,7 @@
 
         function checkPassword() {
             const password = document.getElementById('password').value;
-            if (password === '3') {
+            if (password === 'SPARTACUS') {
                 window.location.href = 'game.html';
             } else {
                 document.getElementById('scarySound').play();
