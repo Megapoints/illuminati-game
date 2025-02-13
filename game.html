@@ -6,6 +6,8 @@
     <title>Dark Ride</title>
     <style>
         body {
+            background: url('background2.png') no-repeat center center fixed;
+            background-size: cover;
             background: black;
             color: white;
             font-family: 'Courier New', monospace;
@@ -87,9 +89,6 @@
         }
         
         document.addEventListener("keydown", (e) => {
-            if (e.key === " " && !boostActive) {
-                activateBoost();
-            }
             keys[e.key] = true;
             if (e.key === "Enter" && !gameRunning) {
                 document.getElementById("startMessage").style.display = "none";
@@ -100,8 +99,6 @@
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
         function startGame() {
-            boostActive = false;
-            boostCooldown = false;
             totalFrames = 0;
             totalFrames = 0;
             illuminatiEye = null;
@@ -114,18 +111,6 @@
             gameRunning = true;
             document.getElementById("backgroundMusic").play();
             gameLoop();
-        }
-
-        function activateBoost() {
-            if (boostCooldown) return;
-            boostActive = true;
-            boostCooldown = true;
-            setTimeout(() => {
-                boostActive = false;
-                setTimeout(() => {
-                    boostCooldown = false;
-                }, 5000);
-            }, 2000);
         }
 
         function drawBike() {
@@ -162,11 +147,6 @@
         }
 
         function gameLoop() {
-            if (boostActive) {
-                bike.speed = 4;
-            } else {
-                bike.speed = 2;
-            }
             if (totalFrames >= 1600 && !illuminatiEye) {
                 illuminatiEye = { x: canvas.width, y: 0, width: 1200, height: canvas.height, speed: 0.2 };
             }
@@ -221,10 +201,10 @@
                 }
             });
             
-            if (frame % 60 === 0) {
+            if (frame % 110 === 0) {
                 spawnObstacle();
             }
-            if (frame % 60 === 0) {
+            if (frame % 120 === 0) {
                 gameSpeed += 0.3;
                 speedIncreaseCount++;
                 speedIncreaseCount++;
