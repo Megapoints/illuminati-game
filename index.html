@@ -15,12 +15,18 @@
         .hidden-message {
             opacity: 0;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             font-size: 20px;
             transition: opacity 2s;
         }
+        .message1 { top: 45%; left: 50%; transform: translate(-50%, -50%); }
+        .message2 { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .message3 { top: 55%; left: 50%; transform: translate(-50%, -50%); }
+        .message4 { top: 60%; left: 50%; transform: translate(-50%, -50%); }
+        .message5 { top: 65%; left: 50%; transform: translate(-50%, -50%); }
+        .message6 { top: 70%; left: 50%; transform: translate(-50%, -50%); }
+        .message7 { top: 75%; left: 50%; transform: translate(-50%, -50%); }
+        .message8 { top: 80%; left: 50%; transform: translate(-50%, -50%); }
+        
         .password-container {
             margin-top: 20vh;
         }
@@ -37,28 +43,36 @@
     <h1>Enter the Password</h1>
     <div class="password-container">
         <input type="password" class="password-input" id="password" placeholder="********">
-        <button onclick="checkPassword()">Submit</enter>
+        <button onclick="checkPassword()">Submit</button>
     </div>
-    <div class="hidden-message" id="hiddenMessage">The truth is near...</div>
+    <div class="hidden-message message1" id="hiddenMessage1">The truth is near...</div>
+    <div class="hidden-message message2" id="hiddenMessage2">Minna Marika You are not ready...</div>
+    <div class="hidden-message message3" id="hiddenMessage3">They are watching everything...</div>
+    <div class="hidden-message message4" id="hiddenMessage4">Our founder tried to warn you...</div>
+    <div class="hidden-message message5" id="hiddenMessage5">Do not seek what you cannot understand...</div>
+    <div class="hidden-message message6" id="hiddenMessage6">We can see you Minna Marika...</div>
+    <div class="hidden-message message7" id="hiddenMessage7">They do not call me ADAM...</div>
+    <div class="hidden-message message8" id="hiddenMessage8">Run while you still can...</div>
     <audio id="scarySound" src="background-scary.mp4" preload="auto"></audio>
+    
     <script>
-        function saveFile(content, filename) {
-            const blob = new Blob([content], { type: 'text/html' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-        
+        let wrongAttempts = 0;
+
         function checkPassword() {
             const password = document.getElementById('password').value;
             if (password === '3') {
                 window.location.href = 'game.html';
             } else {
-                document.getElementById('hiddenMessage').style.opacity = 1;
                 document.getElementById('scarySound').play();
+                wrongAttempts++;
+
+                for (let i = 1; i <= 8; i++) {
+                    document.getElementById(`hiddenMessage${i}`).style.opacity = 0;
+                }
+
+                if (wrongAttempts >= 1 && wrongAttempts <= 8) {
+                    document.getElementById(`hiddenMessage${wrongAttempts}`).style.opacity = 1;
+                }
             }
         }
     </script>
