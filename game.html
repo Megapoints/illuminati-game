@@ -24,7 +24,7 @@
             margin-top: 20px;
             color: red;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 5s ease-in-out;
             animation: flash 1s infinite alternate;
         }
         @keyframes flash {
@@ -44,8 +44,8 @@
 <body>
     <h1>Ride to the Truth</h1>
     <p id="startMessage">Press ENTER to start</p>
-    <canvas id="gameCanvas" width="1000" height="600"></canvas>
-    <div id="coordinates">Coordinates: 51.5074° N, 0.1278° W</div>
+    <canvas id="gameCanvas" width="1200" height="800"></canvas>
+    <div id="coordinates">61.496435, 23.732143 </div>
     <audio id="backgroundMusic" loop autoplay>
         <source src="background-scary.mp4" type="audio/mp4">
     </audio>
@@ -87,6 +87,9 @@
         }
         
         document.addEventListener("keydown", (e) => {
+            if (e.key === " " && !boostActive) {
+                activateBoost();
+            }
             keys[e.key] = true;
             if (e.key === "Enter" && !gameRunning) {
                 document.getElementById("startMessage").style.display = "none";
@@ -97,6 +100,8 @@
         document.addEventListener("keyup", (e) => { keys[e.key] = false; });
 
         function startGame() {
+            boostActive = false;
+            boostCooldown = false;
             totalFrames = 0;
             totalFrames = 0;
             illuminatiEye = null;
@@ -111,6 +116,18 @@
             gameLoop();
         }
 
+        function activateBoost() {
+            if (boostCooldown) return;
+            boostActive = true;
+            boostCooldown = true;
+            setTimeout(() => {
+                boostActive = false;
+                setTimeout(() => {
+                    boostCooldown = false;
+                }, 5000);
+            }, 2000);
+        }
+
         function drawBike() {
             ctx.drawImage(bikeImg, bike.x, bike.y, bike.width, bike.height);
         }
@@ -118,7 +135,7 @@
         function spawnObstacle() {
             const type = Math.random() > 0.5 ? "alien" : "rock";
             const yPosition = Math.random() * (canvas.height - 40);
-            let sizeIncrease = speedIncreaseCount * 1.3;
+            let sizeIncrease = speedIncreaseCount * 1.5;
             obstacles.push({ x: canvas.width, y: yPosition, width: 40 + sizeIncrease, height: 40 + sizeIncrease, type });
         }
 
@@ -145,8 +162,13 @@
         }
 
         function gameLoop() {
-            if (totalFrames >= 3000 && !illuminatiEye) {
-                illuminatiEye = { x: canvas.width, y: 0, width: 800, height: canvas.height, speed: 0.2 };
+            if (boostActive) {
+                bike.speed = 4;
+            } else {
+                bike.speed = 2;
+            }
+            if (totalFrames >= 1600 && !illuminatiEye) {
+                illuminatiEye = { x: canvas.width, y: 0, width: 1200, height: canvas.height, speed: 0.2 };
             }
             if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -161,7 +183,7 @@
                 ) {
                     document.getElementById("coordinates").style.display = "block";
                     document.getElementById("coordinates").style.opacity = 1;
-                    document.getElementById("startMessage").textContent = "MEGA";
+                    document.getElementById("startMessage").textContent = "162251407 noli sero esse";
                     document.getElementById("startMessage").style.color = "red";
                     document.getElementById("startMessage").style.animation = "flash 1s infinite alternate";
                     gameRunning = false;
@@ -199,10 +221,10 @@
                 }
             });
             
-            if (frame % 90 === 0) {
+            if (frame % 60 === 0) {
                 spawnObstacle();
             }
-            if (frame % 120 === 0) {
+            if (frame % 60 === 0) {
                 gameSpeed += 0.3;
                 speedIncreaseCount++;
                 speedIncreaseCount++;
