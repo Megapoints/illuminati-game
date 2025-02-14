@@ -170,7 +170,7 @@
                 bike.speed = 2;
             }
             if (totalFrames >= 1600 && !illuminatiEye) {
-                illuminatiEye = { x: canvas.width, y: 0, width: 1200, height: canvas.height, speed: 0.2 };
+                illuminatiEye = { x: canvas.width, y: 0, width: 1200, height: canvas.height, speed: 0.3 };
             }
             if (!gameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -185,7 +185,7 @@
                 ) {
                     document.getElementById("coordinates").style.display = "block";
                     document.getElementById("coordinates").style.opacity = 1;
-                    document.getElementById("startMessage").textContent = "162251407 noli sero esse";
+                    document.getElementById("startMessage").textContent = "MEGA";
                     document.getElementById("startMessage").style.color = "red";
                     document.getElementById("startMessage").style.animation = "flash 1s infinite alternate";
                     gameRunning = false;
@@ -223,7 +223,7 @@
                 }
             });
             
-            if (frame % 60 === 0) {
+            if (frame % 80 === 0) {
                 spawnObstacle();
             }
             if (frame % 80 === 0) {
@@ -240,3 +240,5 @@
     </script>
 </body>
 </html>
+
+Keep Audio On, Space For Boost, Move With Arrows
