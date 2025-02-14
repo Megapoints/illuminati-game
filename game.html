@@ -47,7 +47,7 @@
     <h1>Ride to the Truth</h1>
     <p id="startMessage">Press ENTER to start</p>
     <canvas id="gameCanvas" width="1200" height="800"></canvas>
-    <div id="coordinates">61.496435, 23.732143 </div>
+    <div id="coordinates">Coordinates: 61.496435 23.732143 </div>
     <audio id="backgroundMusic" loop autoplay>
         <source src="background-scary.mp4" type="audio/mp4">
     </audio>
@@ -223,7 +223,7 @@
                 }
             });
             
-            if (frame % 80 === 0) {
+            if (frame % 70 === 0) {
                 spawnObstacle();
             }
             if (frame % 80 === 0) {
