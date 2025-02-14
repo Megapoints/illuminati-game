@@ -59,8 +59,10 @@
         let wrongAttempts = 0;
 
         function checkPassword() {
-            const password = document.getElementById('password').value;
-            if (password === 'SPARTACUS') {
+            const password = document.getElementById('password').value.toLowerCase(); // Convert input to lowercase
+            const correctPassword = 'spartacus'; // Store the correct password in lowercase
+
+            if (password === correctPassword) {
                 window.location.href = 'game.html';
             } else {
                 document.getElementById('scarySound').play();
